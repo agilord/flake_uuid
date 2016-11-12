@@ -22,6 +22,7 @@ class Flake64 {
   /// The machine ID
   final int machineId;
 
+  int _epochOffset = 0;
   int _timeShiftBits = 0;
   _Tracker _tracker;
 
@@ -31,7 +32,8 @@ class Flake64 {
       {this.machineId,
       this.machineBits: 10,
       this.sequenceBits: 11,
-      TimestampSource time: _currentMillis}) {
+      TimestampSource time: _currentMillis,
+      int epochYear}) {
     if (machineBits < 1) throw 'Machine bits must be at least 1.';
     if (sequenceBits < 1) throw 'Sequence bits must be at least 1.';
     _timeShiftBits = machineBits + sequenceBits;
@@ -40,12 +42,15 @@ class Flake64 {
     if (this.machineId < 0 || this.machineId > (1 << machineBits) - 1)
       throw 'Machine ID out of bounds.';
     _tracker = new _Tracker(time, sequenceBits);
+    if (epochYear != null) {
+      _epochOffset = new DateTime(epochYear).millisecondsSinceEpoch;
+    }
   }
 
   /// Gets the next value as an integer.
   int nextInt() {
     _tracker.increment();
-    return (_tracker.timestamp << _timeShiftBits) +
+    return ((_tracker.timestamp - _epochOffset) << _timeShiftBits) +
         (machineId << sequenceBits) +
         _tracker.sequence;
   }
