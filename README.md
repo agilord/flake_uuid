@@ -62,3 +62,11 @@ a pre-coordinated machine ID:
       var x = flake.nextInt(); // not recommended
       var y = flake.nextHex(); // '000540947b2305c4a25c0001c73a0000'
     }
+
+## Links
+
+- [source code][source]
+- contributors: [Agilord][agilord]
+
+[source]: https://github.com/agilord/flake_uuid
+[agilord]: https://www.agilord.com/
