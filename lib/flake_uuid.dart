@@ -10,7 +10,7 @@ import 'flake_base.dart';
 /// Generates a machine ID based on the process's environment and current
 /// timestamp.
 int _machineId(int bits) {
-  List values = [
+  final List values = [
     Platform.operatingSystem,
     Platform.numberOfProcessors,
     Platform.localHostname,
@@ -21,12 +21,12 @@ int _machineId(int bits) {
     new DateTime.now().microsecondsSinceEpoch
   ];
   if (bits <= 30) {
-    int hash = values.join('/@/').hashCode.abs();
+    final int hash = values.join('/@/').hashCode.abs();
     return hash % (1 << bits);
   } else if (bits <= 60) {
-    int hash1 = values.join('/').hashCode.abs();
-    int hash2 = values.join('@').hashCode.abs();
-    int hash = (hash1 % (1 << 30)) * (1 << 30) + (hash2 % (1 << (bits - 30)));
+    final int hash1 = values.join('/').hashCode.abs();
+    final int hash2 = values.join('@').hashCode.abs();
+    final int hash = (hash1 % (1 << 30)) * (1 << 30) + (hash2 % (1 << (bits - 30)));
     return hash % (1 << bits);
   } else {
     throw 'Cannot handle $bits bits.';
