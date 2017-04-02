@@ -91,6 +91,20 @@ class Flake128 {
         _machineIdHex +
         _tracker.sequence.toRadixString(16).padLeft(4, '0');
   }
+
+  /// Gets the next value as a UUID-formatted String.
+  String nextUuid() {
+    final hex = nextHex();
+    return hex.substring(0, 8) +
+        '-' +
+        hex.substring(8, 12) +
+        '-' +
+        hex.substring(12, 16) +
+        '-' +
+        hex.substring(16, 20) +
+        '-' +
+        hex.substring(20);
+  }
 }
 
 class _Tracker {

@@ -67,6 +67,7 @@ void main() {
       expect(flake.nextHex(), '000000000000000a0000000000010000');
       expect(flake.nextHex(), '000000000000000a0000000000010001');
       expect(flake.nextHex(), '000000000000000a0000000000010002');
+      expect(flake.nextUuid(), '00000000-0000-000a-0000-000000010003');
     });
   });
 }

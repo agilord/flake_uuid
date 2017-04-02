@@ -61,6 +61,7 @@ a pre-coordinated machine ID:
       var flake = new Flake128(machineId: 123);
       var x = flake.nextInt(); // not recommended
       var y = flake.nextHex(); // '000540947b2305c4a25c0001c73a0000'
+      var z = flake.nextUuid(); // '00054094-7b23-05c4-a25c-0001c73a0001'
     }
 
 ## Links
