@@ -28,12 +28,14 @@ class Flake64 {
 
   /// Create a Flake64 instance. The default configuration uses
   /// a 42-bit timestamp, 10-bit machine id, and 11-bit sequence.
-  Flake64(
-      {this.machineId,
-      this.machineBits: 10,
-      this.sequenceBits: 11,
-      TimestampSource time: _currentMillis,
-      int epochYear}) {
+  Flake64({
+    this.machineId,
+    this.machineBits: 10,
+    this.sequenceBits: 11,
+    TimestampSource time: _currentMillis,
+    int epochYear,
+    bool continuousSequence: false,
+  }) {
     if (machineBits < 1) throw 'Machine bits must be at least 1.';
     if (sequenceBits < 1) throw 'Sequence bits must be at least 1.';
     _timeShiftBits = machineBits + sequenceBits;
@@ -41,7 +43,7 @@ class Flake64 {
     if (this.machineId == null) 'Machine ID must be set.';
     if (this.machineId < 0 || this.machineId > (1 << machineBits) - 1)
       throw 'Machine ID out of bounds.';
-    _tracker = new _Tracker(time, sequenceBits);
+    _tracker = new _Tracker(time, sequenceBits, continuousSequence);
     if (epochYear != null) {
       _epochOffset = new DateTime(epochYear).millisecondsSinceEpoch;
     }
@@ -70,11 +72,15 @@ class Flake128 {
   _Tracker _tracker;
 
   /// Create a Flake128 instance.
-  Flake128({this.machineId, TimestampSource time: _currentMicros}) {
+  Flake128({
+    this.machineId,
+    TimestampSource time: _currentMicros,
+    bool continuousSequence: false,
+  }) {
     if (this.machineId == null) 'Machine ID must be set.';
     if (this.machineId < 0 || this.machineId > (1 << 48) - 1)
       throw 'Machine ID out of bounds.';
-    _tracker = new _Tracker(time, 16);
+    _tracker = new _Tracker(time, 16, continuousSequence);
     _machineIdHex = machineId.toRadixString(16).padLeft(12, '0');
   }
 
@@ -109,13 +115,15 @@ class Flake128 {
 
 class _Tracker {
   final TimestampSource time;
+  final bool continuousSequence;
   int _maxSequence;
 
   int _timestamp = 0;
   int _sequence = 0;
 
-  _Tracker(this.time, int sequenceBits) {
+  _Tracker(this.time, int sequenceBits, this.continuousSequence) {
     _maxSequence = (1 << sequenceBits) - 1;
+    _sequence = _maxSequence;
   }
 
   int get timestamp => _timestamp;
@@ -123,18 +131,18 @@ class _Tracker {
 
   void increment() {
     int ts = 0;
+    final bool isMax = _sequence >= _maxSequence;
     do {
       ts = time();
       if (ts < _timestamp && (_timestamp - ts) > _maxClockSkewMillis)
         throw 'Max clock skew reached.';
-    } while (
-        (ts < _timestamp) || (ts == _timestamp && _sequence == _maxSequence));
+    } while ((ts < _timestamp) || (ts == _timestamp && isMax));
 
-    if (_timestamp == ts) {
-      _sequence++;
-    } else {
-      _timestamp = ts;
+    if (_timestamp != ts && (isMax || !continuousSequence)) {
       _sequence = 0;
+    } else {
+      _sequence++;
     }
+    _timestamp = ts;
   }
 }

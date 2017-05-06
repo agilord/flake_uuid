@@ -59,15 +59,61 @@ void main() {
       final int b = flake.nextInt();
       expect(a, lessThan(b));
     });
+
+    test('Reset sequence.', () {
+      int time = 10;
+      final flake = new Flake64(machineId: 0, time: () => time);
+      expect(flake.nextHex(), '0000000001400000');
+      expect(flake.nextHex(), '0000000001400001');
+      expect(flake.nextHex(), '0000000001400002');
+      time = 11;
+      expect(flake.nextHex(), '0000000001600000');
+      expect(flake.nextHex(), '0000000001600001');
+      expect(flake.nextHex(), '0000000001600002');
+    });
+
+    test('Continuous sequence.', () {
+      int time = 10;
+      final flake = new Flake64(
+        machineId: 0,
+        time: () => time,
+        continuousSequence: true,
+      );
+      expect(flake.nextHex(), '0000000001400000');
+      expect(flake.nextHex(), '0000000001400001');
+      expect(flake.nextHex(), '0000000001400002');
+      time = 11;
+      expect(flake.nextHex(), '0000000001600003');
+      expect(flake.nextHex(), '0000000001600004');
+      expect(flake.nextHex(), '0000000001600005');
+    });
   });
 
   group('Flake128', () {
-    test('Simple sequence.', () {
-      final flake = new Flake128(machineId: 1, time: () => 10);
+    test('Reset sequence.', () {
+      int time = 10;
+      final flake = new Flake128(machineId: 1, time: () => time);
       expect(flake.nextHex(), '000000000000000a0000000000010000');
       expect(flake.nextHex(), '000000000000000a0000000000010001');
       expect(flake.nextHex(), '000000000000000a0000000000010002');
       expect(flake.nextUuid(), '00000000-0000-000a-0000-000000010003');
+      time = 11;
+      expect(flake.nextHex(), '000000000000000b0000000000010000');
+    });
+
+    test('Continuous sequence.', () {
+      int time = 10;
+      final flake = new Flake128(
+        machineId: 1,
+        time: () => time,
+        continuousSequence: true,
+      );
+      expect(flake.nextHex(), '000000000000000a0000000000010000');
+      expect(flake.nextHex(), '000000000000000a0000000000010001');
+      expect(flake.nextHex(), '000000000000000a0000000000010002');
+      expect(flake.nextUuid(), '00000000-0000-000a-0000-000000010003');
+      time = 11;
+      expect(flake.nextHex(), '000000000000000b0000000000010004');
     });
   });
 }
