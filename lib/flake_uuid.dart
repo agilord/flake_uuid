@@ -26,10 +26,11 @@ int _machineId(int bits) {
   } else if (bits <= 60) {
     final int hash1 = values.join('/').hashCode.abs();
     final int hash2 = values.join('@').hashCode.abs();
-    final int hash = (hash1 % (1 << 30)) * (1 << 30) + (hash2 % (1 << (bits - 30)));
+    final int hash =
+        (hash1 % (1 << 30)) * (1 << 30) + (hash2 % (1 << (bits - 30)));
     return hash % (1 << bits);
   } else {
-    throw 'Cannot handle $bits bits.';
+    throw new StateError('Cannot handle $bits bits.');
   }
 }
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Update project with analysis suggestions.
+
 ## 0.1.1
 
 - Option for continuous sequence increments.

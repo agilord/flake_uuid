@@ -36,13 +36,16 @@ class Flake64 {
     int epochYear,
     bool continuousSequence: false,
   }) {
-    if (machineBits < 1) throw 'Machine bits must be at least 1.';
-    if (sequenceBits < 1) throw 'Sequence bits must be at least 1.';
+    if (machineBits < 1)
+      throw new StateError('Machine bits must be at least 1.');
+    if (sequenceBits < 1)
+      throw new StateError('Sequence bits must be at least 1.');
     _timeShiftBits = machineBits + sequenceBits;
-    if (_timeShiftBits > 21) throw 'Too many machine+sequence bits.';
-    if (this.machineId == null) 'Machine ID must be set.';
+    if (_timeShiftBits > 21)
+      throw new StateError('Too many machine+sequence bits.');
+    if (this.machineId == null) throw new StateError('Machine ID must be set.');
     if (this.machineId < 0 || this.machineId > (1 << machineBits) - 1)
-      throw 'Machine ID out of bounds.';
+      throw new StateError('Machine ID out of bounds.');
     _tracker = new _Tracker(time, sequenceBits, continuousSequence);
     if (epochYear != null) {
       _epochOffset = new DateTime(epochYear).millisecondsSinceEpoch;
@@ -79,7 +82,7 @@ class Flake128 {
   }) {
     if (this.machineId == null) 'Machine ID must be set.';
     if (this.machineId < 0 || this.machineId > (1 << 48) - 1)
-      throw 'Machine ID out of bounds.';
+      throw new StateError('Machine ID out of bounds.');
     _tracker = new _Tracker(time, 16, continuousSequence);
     _machineIdHex = machineId.toRadixString(16).padLeft(12, '0');
   }
@@ -135,7 +138,7 @@ class _Tracker {
     do {
       ts = time();
       if (ts < _timestamp && (_timestamp - ts) > _maxClockSkewMillis)
-        throw 'Max clock skew reached.';
+        throw new StateError('Max clock skew reached.');
     } while ((ts < _timestamp) || (ts == _timestamp && isMax));
 
     if (_timestamp != ts && (isMax || !continuousSequence)) {

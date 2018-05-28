@@ -2,7 +2,7 @@ name: flake_uuid
 description: >
   Flake UUID provides 64- and 128-bit, k-ordered identifiers, which
   preserve their order of creation (somewhat) if sorted lexically.
-version: 0.1.1
+version: 0.1.2
 author: Istvan Soos <istvan.soos@agilord.com>
 
 homepage: https://github.com/agilord/flake_uuid

@@ -8,11 +8,14 @@ import 'package:test/test.dart';
 void main() {
   group('Flake64', () {
     test('Invalid config.', () {
-      expect(() => new Flake64(), throws);
-      expect(() => new Flake64(machineId: -1), throws);
-      expect(() => new Flake64(machineId: 100, machineBits: 2), throws);
-      expect(() => new Flake64(machineId: 0, machineBits: 20), throws);
-      expect(() => new Flake64(machineId: 0, sequenceBits: 20), throws);
+      expect(() => new Flake64(), throwsStateError);
+      expect(() => new Flake64(machineId: -1), throwsStateError);
+      expect(
+          () => new Flake64(machineId: 100, machineBits: 2), throwsStateError);
+      expect(
+          () => new Flake64(machineId: 0, machineBits: 20), throwsStateError);
+      expect(
+          () => new Flake64(machineId: 0, sequenceBits: 20), throwsStateError);
     });
 
     test('Simple sequence.', () {
@@ -47,7 +50,7 @@ void main() {
       flake.nextInt();
       expect(() {
         flake.nextInt();
-      }, throws);
+      }, throwsStateError);
       expect(timestamp, lessThan(998000)); // throws after 2 seconds
     });
 
