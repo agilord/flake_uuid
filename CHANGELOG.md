@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Dart 2 support.
+
 ## 0.1.2
 
 - Update project with analysis suggestions.
