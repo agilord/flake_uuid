@@ -24,18 +24,18 @@ class Flake64 {
 
   int _epochOffset = 0;
   int _timeShiftBits = 0;
-  _Tracker _tracker;
+  final _Tracker _tracker;
 
   /// Create a Flake64 instance. The default configuration uses
   /// a 42-bit timestamp, 10-bit machine id, and 11-bit sequence.
   Flake64({
-    this.machineId,
+    required this.machineId,
     this.machineBits: 10,
     this.sequenceBits: 11,
     TimestampSource time: _currentMillis,
-    int epochYear,
+    int? epochYear,
     bool continuousSequence: false,
-  }) {
+  }) : _tracker = new _Tracker(time, sequenceBits, continuousSequence) {
     if (machineBits < 1)
       throw new StateError('Machine bits must be at least 1.');
     if (sequenceBits < 1)
@@ -43,10 +43,8 @@ class Flake64 {
     _timeShiftBits = machineBits + sequenceBits;
     if (_timeShiftBits > 21)
       throw new StateError('Too many machine+sequence bits.');
-    if (this.machineId == null) throw new StateError('Machine ID must be set.');
     if (this.machineId < 0 || this.machineId > (1 << machineBits) - 1)
       throw new StateError('Machine ID out of bounds.');
-    _tracker = new _Tracker(time, sequenceBits, continuousSequence);
     if (epochYear != null) {
       _epochOffset = new DateTime(epochYear).millisecondsSinceEpoch;
     }
@@ -70,21 +68,19 @@ class Flake64 {
 class Flake128 {
   /// The machine ID
   final int machineId;
-  String _machineIdHex;
+  final String _machineIdHex;
 
-  _Tracker _tracker;
+  final _Tracker _tracker;
 
   /// Create a Flake128 instance.
   Flake128({
-    this.machineId,
+    required this.machineId,
     TimestampSource time: _currentMicros,
     bool continuousSequence: false,
-  }) {
-    if (this.machineId == null) 'Machine ID must be set.';
+  })  : _tracker = new _Tracker(time, 16, continuousSequence),
+        _machineIdHex = machineId.toRadixString(16).padLeft(12, '0') {
     if (this.machineId < 0 || this.machineId > (1 << 48) - 1)
       throw new StateError('Machine ID out of bounds.');
-    _tracker = new _Tracker(time, 16, continuousSequence);
-    _machineIdHex = machineId.toRadixString(16).padLeft(12, '0');
   }
 
   /// Gets the next value as an integer.
@@ -119,13 +115,13 @@ class Flake128 {
 class _Tracker {
   final TimestampSource time;
   final bool continuousSequence;
-  int _maxSequence;
+  final int _maxSequence;
 
   int _timestamp = 0;
   int _sequence = 0;
 
-  _Tracker(this.time, int sequenceBits, this.continuousSequence) {
-    _maxSequence = (1 << sequenceBits) - 1;
+  _Tracker(this.time, int sequenceBits, this.continuousSequence)
+      : _maxSequence = (1 << sequenceBits) - 1 {
     _sequence = _maxSequence;
   }
 

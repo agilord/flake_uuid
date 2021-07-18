@@ -8,7 +8,6 @@ import 'package:test/test.dart';
 void main() {
   group('Flake64', () {
     test('Invalid config.', () {
-      expect(() => new Flake64(), throwsStateError);
       expect(() => new Flake64(machineId: -1), throwsStateError);
       expect(
           () => new Flake64(machineId: 100, machineBits: 2), throwsStateError);
