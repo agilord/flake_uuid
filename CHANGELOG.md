@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Update lints.
+
 ## 0.2.0
 
 - Migrated to null safety. ([#1](https://github.com/agilord/flake_uuid/pull/1) by [westito](https://github.com/westito))
