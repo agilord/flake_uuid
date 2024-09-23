@@ -17,7 +17,7 @@ int _machineId(int bits) {
     pid,
     Platform.resolvedExecutable,
     Platform.script,
-    Platform.executableArguments?.join(', '),
+    Platform.executableArguments.join(', '),
     new DateTime.now().microsecondsSinceEpoch
   ];
   if (bits <= 30) {

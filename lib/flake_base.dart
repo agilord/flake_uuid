@@ -30,11 +30,11 @@ class Flake64 {
   /// a 42-bit timestamp, 10-bit machine id, and 11-bit sequence.
   Flake64({
     required this.machineId,
-    this.machineBits: 10,
-    this.sequenceBits: 11,
-    TimestampSource time: _currentMillis,
+    this.machineBits = 10,
+    this.sequenceBits = 11,
+    TimestampSource time = _currentMillis,
     int? epochYear,
-    bool continuousSequence: false,
+    bool continuousSequence = false,
   }) : _tracker = new _Tracker(time, sequenceBits, continuousSequence) {
     if (machineBits < 1)
       throw new StateError('Machine bits must be at least 1.');
@@ -75,8 +75,8 @@ class Flake128 {
   /// Create a Flake128 instance.
   Flake128({
     required this.machineId,
-    TimestampSource time: _currentMicros,
-    bool continuousSequence: false,
+    TimestampSource time = _currentMicros,
+    bool continuousSequence = false,
   })  : _tracker = new _Tracker(time, 16, continuousSequence),
         _machineIdHex = machineId.toRadixString(16).padLeft(12, '0') {
     if (this.machineId < 0 || this.machineId > (1 << 48) - 1)
